@@ -1,338 +1,369 @@
-﻿@{
+﻿{
     ViewData["Title"] = "Home Page";
 }
-
  
 <style>
-    body{
+    body {
         background-color: black;
     }
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
 
-var r = 180;
-  var width = 550;
-  var height = 550;
+    var r = 180;
+    var width = 550;
+    var height = 550;
 
-  var Allelements =  ['GridComponent','SolarComponent','ChargeComponent','BatteryComponent','OtherComponent'];
-$(document).ready(function() {
-  
+    var Allelements = ['GridComponent', 'SolarComponent', 'ChargeComponent', 'BatteryComponent', 'OtherComponent'];
+    $(document).ready(function () {
+        EnergyComponent();
+    });
+    function EnergyComponent() {
 
-  for (let index = 0; index < Allelements.length; index++) {
-
-        document.getElementById(Allelements[index]).style.display = "none";
-  }
-});
-function F1() {
-  
-    var elements =  ['GridComponent','SolarComponent','ChargeComponent', 'OtherComponent','BatteryComponent'];
-    //var elements =  ['GridComponent','SolarComponent','ChargeComponent','BatteryComponent'];
-    //var elements =  ['GridComponent','SolarComponent','ChargeComponent'];
-    //var elements =  ['GridComponent','SolarComponent'];
+        var choice = Math.floor(Math.random() * (2 - 0) + 0);
 
 
+        var elements = ['GridComponent', 'SolarComponent', 'ChargeComponent', 'OtherComponent', 'BatteryComponent'];
+        
+        if (choice == 0) { var elements = ['GridComponent', 'SolarComponent', 'ChargeComponent', 'OtherComponent', 'BatteryComponent']; }
+        if (choice == 1) { var elements = ['GridComponent', 'SolarComponent', 'ChargeComponent']; }
+        if (choice == 2) { var elements = ['GridComponent', 'SolarComponent']; }
+        // var elements =  ['GridComponent','SolarComponent','ChargeComponent','BatteryComponent'];
+        //var elements =  ['GridComponent','SolarComponent','ChargeComponent'];
+        //var elements =  ['GridComponent','SolarComponent'];
+
+
+        var steps = 360 / elements.length;
+        for (let index = 0; index < elements.length; index++) {
+             
+            var circle = document.getElementById(elements[index]);
+            circle.setAttribute("transform", 'translate(' + getX(index * steps) + ', ' + getY(index * steps) + ')');
+            circle.style.display = "block";
+
+            let line = document.querySelector('#baseline').cloneNode(true);
+            let dot = document.querySelector('#basedot').cloneNode(true);
+
+            // Random input / output flow direction
+            var random_boolean = Math.random() < 0.5;
+            if (random_boolean) {
+                dot.classList.add('out');
+
+                var circleRing = document.getElementById(elements[index] + '_circle');
+              
+                if (Math.random() < 0.5) {
+                    circleRing.style.stroke = "blue";
+                } else {
+
+
+                    circleRing.style.stroke = "purple";
+                }
+ 
+            };
+
+            var value = Math.floor(Math.random() * (750 - 0) + 0);
+            var powerText = document.getElementById(elements[index] + '_pt');
+            powerText.innerHTML = value + " kW";
 
 
 
+            // Change the id attribute of the newly created element:
+            line.setAttribute('id', ' line_' + elements[index]);
 
- var steps  = 360 / elements.length;
-for (let index = 0; index < elements.length; index++) {
-    
-    document.getElementById(elements[index]).setAttribute("transform", 'translate(' + getX(index * steps) + ', ' +  getY(index * steps) + ')');
-    document.getElementById(elements[index]).style.display = "block";
-}
-  
+            // Change the id attribute of the newly created element:
+            dot.setAttribute('id', ' dot_' + elements[index]);
 
-}
+            // Append the newly created element on element p
+            document.querySelector('#EnergyCircle').appendChild(line);
+            document.querySelector('#EnergyCircle').appendChild(dot);
+            dot.style.display = "block";
+            line.style.display = "block";
 
-function d2r(degrees)
-{
-  // Store the value of pi.
-  var pi = Math.PI;
-  // Multiply degrees by pi divided by 180 to convert to radians.
-  return (degrees -90) * (pi/180);
-}
+            // draw lines
+            line.setAttribute("x1", width / 2);
+            line.setAttribute("y1", height / 2);
+            line.setAttribute("x2", getX2(index * steps));
+            line.setAttribute("y2", getY2(index * steps));
 
+            // draw dots
+            dot.setAttribute("x1", width / 2);
+            dot.setAttribute("y1", height / 2);
+            dot.setAttribute("x2", getX2(index * steps));
+            dot.setAttribute("y2", getY2(index * steps));
+        }
+    }
 
-function getY(angle){
-    
-    return  Math.round((width/2) + r * Math.cos(d2r(angle)));
-}
+    function d2r(degrees) {
+        // Store the value of pi.
+        var pi = Math.PI;
+        // Multiply degrees by pi divided by 180 to convert to radians.
+        return (degrees - 90) * (pi / 180);
+    }
 
-function getX(angle){
-    return  Math.round((height/2) + r * Math.sin(d2r(angle)));
-}
+    function getY(angle) {
+        return Math.round((width / 2) + r * Math.cos(d2r(angle)));
+    }
+    function getX(angle) {
+        return Math.round((height / 2) + r * Math.sin(d2r(angle)));
+    }
 
+    function getY2(angle) {
+        return Math.round((width / 2) + (r - 64) * Math.cos(d2r(angle)));
+    }
+    function getX2(angle) {
+        return Math.round((height / 2) + (r - 64) * Math.sin(d2r(angle)));
+    }
 </script>
-
-
 
 <div class="text-center">
 
-<button onclick="F1()" id="b1"> New </button>
-<label id="L"></label>
-<br/>
-<svg id="EnergyCircle" xmlns="http://www.w3.org/2000/svg" width="500" viewBox="-25 -5 550 550">
-				<defs>
-					<style>
+    
+    <svg id="EnergyCircle" xmlns="http://www.w3.org/2000/svg" width="500" viewBox="-25 -5 550 550">
+        <defs>
+            <style>
+                .dot {
+                    filter: blur(0px);
+                    stroke-dasharray: 1 110;
+                    animation-duration: 20000ms;
+                    animation-iteration-count: infinite;
+                    animation-timing-function: linear;
+                    stroke-linecap: round;
+                    stroke-linejoin: round;
+                    stroke-width: 8px;
+                }
+
+                .in {
+                    animation-name: in;
+                    stroke: lime;
+                }
+
+                .out {
+                    animation-name: out;
+                    stroke: Purple;
+                }
+
+                @@keyframes in {
+                    from {
+                        stroke-dashoffset: 0;
+                    }
+
+                    to {
+                        stroke-dashoffset: 600;
+                    }
+                }
+
+                @@keyframes out {
+                    from {
+                        stroke-dashoffset: 600;
+                    }
+
+                    to {
+                        stroke-dashoffset: 0;
+                    }
+                }
+
+                @@keyframes spin {
+                    from {
+                        transform: rotate(0deg);
+                    }
+
+                    to {
+                        transform: rotate(360deg);
+                    }
+                }
+
+                .flow-line {
+                    stroke: white;
+                    stroke-dasharray: 1,1;
+                }
+
+                .Title {
+                    font-size: 16px;
+                    fill: #fff;
+                    font-family: Tahoma;
+                }
+
+                .PowerText {
+                    font-size: 16px;
+                    font-family: Tahoma;
+                    fill: #FFF;
+                    font-weight: 600;
+                }
+
+                .circle {
+                    fill: none;
+                    stroke-linejoin: round;
+                    stroke-miterlimit: 10;
+                    stroke-width: 4px;
+                    stroke: lime;
+                }
+
+                .blue {
+                    stroke: Blue;
+                }
+
+                .purple {
+                    stroke: Purple;
+                }
+
+                .grey {
+                    stroke: grey;
+                }
+            </style>
+        </defs>
 
 
-						.dot {
-							filter: blur(0px);
-							stroke-dasharray: 1 45;
-							animation-duration: 20000ms;
-							animation-iteration-count: infinite;
-							animation-timing-function: linear;
-							stroke-linecap: round;
-							stroke-linejoin: round;
-							stroke-width: 8px;
-						}
+        <g>
+            <!-- Batt -Solar Line -->
+            <line class="flow-line" id="baseline" x1="255" y1="345" x2="255" y2="391" display="none" />
+            <line class="dot in" id="basedot" x1="255" y1="345" x2="255" y2="391" display="none" />
+        </g>
 
-						.in {
-							animation-name: in;
-							stroke: lime;
-						}
 
-						.out {
-							animation-name: out;
-							stroke: Purple;
-						}
-
-						@@keyframes in {
-							from {
-								stroke-dashoffset: 0;
-							}
-
-							to {
-								stroke-dashoffset: 600;
-							}
-						}
-
-						@@keyframes out {
-							from {
-								stroke-dashoffset: 600;
-							}
-
-							to {
-								stroke-dashoffset: 0;
-							}
-						}
-
-						@@keyframes spin {
-							from {
-								transform: rotate(0deg);
-							}
-
-							to {
-								transform: rotate(360deg);
-							}
-						}
-
-						.flow-line {
-							stroke: grey;
-							stroke-dasharray: 1,1;
-						}
-
-						.Title {
-							font-size: 16px;
-							fill: #fff;
-							font-family: Tahoma;
-						}
-
-						.PowerText {
-							font-size: 16px;
-							font-family: Tahoma;
-							fill: #FFF;
-							font-weight: 600;
-						}
-
-						.circle {
-							fill: none;
-							stroke-linejoin: round;
-						
-							stroke-miterlimit: 10;
-							stroke-width: 4px;
-							stroke: lime;
-						}
-
-						.blue {
-							stroke: Blue;
-						}
-
-						.purple {
-							stroke: Purple;
-						}
-
-                        .grey {
-							stroke: grey;
-						}
-					</style>
-				</defs>
-
-				<g id="GridComponent" transform="translate(250, 68)">
-					<circle class="circle  " r="64" />
-                    <g transform="translate(-18 -30)">
-                        <svg viewBox="0 0 492 492" xmlns="http://www.w3.org/2000/svg" id="fi_14837429" width="40" height="40">
-                            <g id="Master_Layer_1"></g>
-                            <g id="Layer_1">
+        <g id="GridComponent" transform="translate(250, 68)" display="none">
+            <circle id="GridComponent_circle" class="circle " r="64" />
+            <g transform="translate(-18 -30)">
+                <svg viewBox="0 0 492 492" xmlns="http://www.w3.org/2000/svg" id="fi_14837429" width="40" height="40">
+                    <g id="Master_Layer_1"></g>
+                    <g id="Layer_1">
+                        <g>
+                            <g>
                                 <g>
                                     <g>
                                         <g>
                                             <g>
-                                                <g>
-                                                    <g>
-                                                        <path clip-rule="evenodd"
-                                                            d="m361.75 177.635h-230.98c-2.499 0-4.713-1.611-5.481-3.989s.084-4.98 2.111-6.442l75.406-54.407c.981-.708 2.16-1.089 3.37-1.089h80.167c1.21 0 2.389.381 3.37 1.089l75.406 54.407c2.026 1.462 2.879 4.064 2.111 6.442s-2.981 3.989-5.48 3.989zm-213.152-11.52h195.325l-59.44-42.887h-76.445z"
-                                                            fill="#ffffff" fill-rule="evenodd"></path>
-                                                    </g>
-                                                    <g>
-                                                        <path clip-rule="evenodd"
-                                                            d="m130.77 197.104c-3.181 0-5.76-2.579-5.76-5.76v-19.47c0-3.181 2.579-5.76 5.76-5.76s5.76 2.579 5.76 5.76v19.47c0 3.181-2.579 5.76-5.76 5.76z"
-                                                            fill="#ffffff" fill-rule="evenodd"></path>
-                                                    </g>
-                                                    <g>
-                                                        <path clip-rule="evenodd"
-                                                            d="m361.75 197.104c-3.181 0-5.76-2.579-5.76-5.76v-19.47c0-3.181 2.579-5.76 5.76-5.76s5.76 2.579 5.76 5.76v19.47c0 3.181-2.579 5.76-5.76 5.76z"
-                                                            fill="#ffffff" fill-rule="evenodd"></path>
-                                                    </g>
-                                                </g>
-                                                <g>
-                                                    <g>
-                                                        <path clip-rule="evenodd"
-                                                            d="m361.75 281.329h-230.98c-2.499 0-4.713-1.612-5.481-3.989-.768-2.378.084-4.98 2.111-6.442l75.406-54.407c.981-.708 2.16-1.089 3.37-1.089h80.167c1.21 0 2.389.381 3.37 1.089l75.406 54.407c2.026 1.462 2.879 4.064 2.111 6.442-.767 2.378-2.981 3.989-5.48 3.989zm-213.152-11.52h195.325l-59.44-42.887h-76.445z"
-                                                            fill="#ffffff" fill-rule="evenodd"></path>
-                                                    </g>
-                                                    <g>
-                                                        <path clip-rule="evenodd"
-                                                            d="m130.77 300.799c-3.181 0-5.76-2.579-5.76-5.76v-19.47c0-3.181 2.579-5.76 5.76-5.76s5.76 2.579 5.76 5.76v19.47c0 3.181-2.579 5.76-5.76 5.76z"
-                                                            fill="#ffffff" fill-rule="evenodd"></path>
-                                                    </g>
-                                                    <g>
-                                                        <path clip-rule="evenodd"
-                                                            d="m361.75 300.799c-3.181 0-5.76-2.579-5.76-5.76v-19.47c0-3.181 2.579-5.76 5.76-5.76s5.76 2.579 5.76 5.76v19.47c0 3.181-2.579 5.76-5.76 5.76z"
-                                                            fill="#ffffff" fill-rule="evenodd"></path>
-                                                    </g>
-                                                </g>
+                                                <path clip-rule="evenodd"
+                                                      d="m361.75 177.635h-230.98c-2.499 0-4.713-1.611-5.481-3.989s.084-4.98 2.111-6.442l75.406-54.407c.981-.708 2.16-1.089 3.37-1.089h80.167c1.21 0 2.389.381 3.37 1.089l75.406 54.407c2.026 1.462 2.879 4.064 2.111 6.442s-2.981 3.989-5.48 3.989zm-213.152-11.52h195.325l-59.44-42.887h-76.445z"
+                                                      fill="purple" fill-rule="evenodd"></path>
                                             </g>
                                             <g>
                                                 <path clip-rule="evenodd"
-                                                    d="m361.747 431.06c-1.039 0-2.086-.28-3.022-.859l-112.465-69.407-112.465 69.407c-2.376 1.466-5.462 1.018-7.321-1.065-1.86-2.083-1.958-5.199-.234-7.395l74.176-94.445v-209.83c0-1.324.456-2.607 1.291-3.634l40.084-49.287c1.094-1.345 2.735-2.126 4.469-2.126s3.375.781 4.469 2.126l40.084 49.287c.835 1.027 1.291 2.31 1.291 3.634v209.83l74.176 94.445c1.725 2.196 1.626 5.312-.234 7.395-1.127 1.261-2.703 1.924-4.299 1.924zm-104.519-77.034 79.993 49.367-52.229-66.501zm-49.699-17.134-52.229 66.501 79.993-49.367zm4.407-10.817 34.324 21.182 34.324-21.183v-206.56l-34.324-42.205-34.324 42.205z"
-                                                    fill="#ffffff" fill-rule="evenodd"></path>
+                                                      d="m130.77 197.104c-3.181 0-5.76-2.579-5.76-5.76v-19.47c0-3.181 2.579-5.76 5.76-5.76s5.76 2.579 5.76 5.76v19.47c0 3.181-2.579 5.76-5.76 5.76z"
+                                                      fill="purple" fill-rule="evenodd"></path>
+                                            </g>
+                                            <g>
+                                                <path clip-rule="evenodd"
+                                                      d="m361.75 197.104c-3.181 0-5.76-2.579-5.76-5.76v-19.47c0-3.181 2.579-5.76 5.76-5.76s5.76 2.579 5.76 5.76v19.47c0 3.181-2.579 5.76-5.76 5.76z"
+                                                      fill="purple" fill-rule="evenodd"></path>
                                             </g>
                                         </g>
                                         <g>
-                                            <path clip-rule="evenodd"
-                                                d="m206.182 281.33c-1.845 0-3.657-.885-4.771-2.526-1.786-2.632-1.101-6.214 1.532-8l80.168-54.407c2.632-1.786 6.214-1.101 8 1.532 1.786 2.632 1.101 6.214-1.532 8l-80.167 54.407c-.992.672-2.117.994-3.23.994z"
-                                                fill="#ffffff" fill-rule="evenodd"></path>
-                                        </g>
-                                        <g>
-                                            <path clip-rule="evenodd"
-                                                d="m286.339 281.33c-1.114 0-2.238-.322-3.229-.995l-80.167-54.407c-2.632-1.786-3.318-5.368-1.532-8.001 1.786-2.632 5.368-3.318 8.001-1.532l80.167 54.407c2.632 1.786 3.318 5.368 1.532 8.001-1.115 1.642-2.928 2.527-4.772 2.527z"
-                                                fill="#ffffff" fill-rule="evenodd"></path>
-                                        </g>
-                                        <g>
-                                            <path clip-rule="evenodd"
-                                                d="m206.182 177.635c-1.845 0-3.657-.884-4.771-2.526-1.786-2.632-1.101-6.214 1.532-8.001l80.167-54.407c2.632-1.786 6.214-1.101 8.001 1.532 1.786 2.632 1.101 6.214-1.532 8.001l-80.167 54.407c-.992.672-2.117.994-3.23.994z"
-                                                fill="#ffffff" fill-rule="evenodd"></path>
-                                        </g>
-                                        <g>
-                                            <path clip-rule="evenodd"
-                                                d="m286.339 177.635c-1.114 0-2.238-.322-3.229-.995l-80.167-54.407c-2.632-1.786-3.318-5.368-1.532-8.001 1.786-2.632 5.368-3.318 8.001-1.532l80.167 54.407c2.632 1.786 3.318 5.368 1.532 8.001-1.115 1.643-2.928 2.527-4.772 2.527z"
-                                                fill="#ffffff" fill-rule="evenodd"></path>
+                                            <g>
+                                                <path clip-rule="evenodd"
+                                                      d="m361.75 281.329h-230.98c-2.499 0-4.713-1.612-5.481-3.989-.768-2.378.084-4.98 2.111-6.442l75.406-54.407c.981-.708 2.16-1.089 3.37-1.089h80.167c1.21 0 2.389.381 3.37 1.089l75.406 54.407c2.026 1.462 2.879 4.064 2.111 6.442-.767 2.378-2.981 3.989-5.48 3.989zm-213.152-11.52h195.325l-59.44-42.887h-76.445z"
+                                                      fill="purple" fill-rule="evenodd"></path>
+                                            </g>
+                                            <g>
+                                                <path clip-rule="evenodd"
+                                                      d="m130.77 300.799c-3.181 0-5.76-2.579-5.76-5.76v-19.47c0-3.181 2.579-5.76 5.76-5.76s5.76 2.579 5.76 5.76v19.47c0 3.181-2.579 5.76-5.76 5.76z"
+                                                      fill="purple" fill-rule="evenodd"></path>
+                                            </g>
+                                            <g>
+                                                <path clip-rule="evenodd"
+                                                      d="m361.75 300.799c-3.181 0-5.76-2.579-5.76-5.76v-19.47c0-3.181 2.579-5.76 5.76-5.76s5.76 2.579 5.76 5.76v19.47c0 3.181-2.579 5.76-5.76 5.76z"
+                                                      fill="purple" fill-rule="evenodd"></path>
+                                            </g>
                                         </g>
                                     </g>
+                                    <g>
+                                        <path clip-rule="evenodd"
+                                              d="m361.747 431.06c-1.039 0-2.086-.28-3.022-.859l-112.465-69.407-112.465 69.407c-2.376 1.466-5.462 1.018-7.321-1.065-1.86-2.083-1.958-5.199-.234-7.395l74.176-94.445v-209.83c0-1.324.456-2.607 1.291-3.634l40.084-49.287c1.094-1.345 2.735-2.126 4.469-2.126s3.375.781 4.469 2.126l40.084 49.287c.835 1.027 1.291 2.31 1.291 3.634v209.83l74.176 94.445c1.725 2.196 1.626 5.312-.234 7.395-1.127 1.261-2.703 1.924-4.299 1.924zm-104.519-77.034 79.993 49.367-52.229-66.501zm-49.699-17.134-52.229 66.501 79.993-49.367zm4.407-10.817 34.324 21.182 34.324-21.183v-206.56l-34.324-42.205-34.324 42.205z"
+                                              fill="#ffffff" fill-rule="evenodd"></path>
+                                    </g>
+                                </g>
+                                <g>
+                                    <path clip-rule="evenodd"
+                                          d="m206.182 281.33c-1.845 0-3.657-.885-4.771-2.526-1.786-2.632-1.101-6.214 1.532-8l80.168-54.407c2.632-1.786 6.214-1.101 8 1.532 1.786 2.632 1.101 6.214-1.532 8l-80.167 54.407c-.992.672-2.117.994-3.23.994z"
+                                          fill="#ffffff" fill-rule="evenodd"></path>
+                                </g>
+                                <g>
+                                    <path clip-rule="evenodd"
+                                          d="m286.339 281.33c-1.114 0-2.238-.322-3.229-.995l-80.167-54.407c-2.632-1.786-3.318-5.368-1.532-8.001 1.786-2.632 5.368-3.318 8.001-1.532l80.167 54.407c2.632 1.786 3.318 5.368 1.532 8.001-1.115 1.642-2.928 2.527-4.772 2.527z"
+                                          fill="#ffffff" fill-rule="evenodd"></path>
+                                </g>
+                                <g>
+                                    <path clip-rule="evenodd"
+                                          d="m206.182 177.635c-1.845 0-3.657-.884-4.771-2.526-1.786-2.632-1.101-6.214 1.532-8.001l80.167-54.407c2.632-1.786 6.214-1.101 8.001 1.532 1.786 2.632 1.101 6.214-1.532 8.001l-80.167 54.407c-.992.672-2.117.994-3.23.994z"
+                                          fill="#ffffff" fill-rule="evenodd"></path>
+                                </g>
+                                <g>
+                                    <path clip-rule="evenodd"
+                                          d="m286.339 177.635c-1.114 0-2.238-.322-3.229-.995l-80.167-54.407c-2.632-1.786-3.318-5.368-1.532-8.001 1.786-2.632 5.368-3.318 8.001-1.532l80.167 54.407c2.632 1.786 3.318 5.368 1.532 8.001-1.115 1.643-2.928 2.527-4.772 2.527z"
+                                          fill="#ffffff" fill-rule="evenodd"></path>
                                 </g>
                             </g>
-                        </svg>
-                    </g>
-					<text class="Title" text-anchor="middle" transform="translate(0,-45)" alignment-baseline="central">Grid</text>
-					<text class="PowerText" text-anchor="middle" transform="translate(0,30)" alignment-baseline="central">139 kW</text>
-				</g>
-
-				<g id="SolarComponent" transform="translate(250, 468)">
-					<circle class="circle  " r="64" />
-                    <g transform="translate(-18 -30)">
-                        <svg viewBox="0 0 512.00001 512" height="40" width="50" xmlns="http://www.w3.org/2000/svg" id="fi_1051748">
-                            <path fill="#ffffff" fill-rule="evenodd" d="m69.699219 150.890625-69.699219 269.808594h196.226562v60.957031h-59.957031v29.976562h149.890625v-29.976562h-59.957031v-60.957031h199.070313l-46.804688-187.222657c25.175781-12.097656 42.597656-37.847656 42.597656-67.597656 0-41.324218-33.621094-74.945312-74.949218-74.945312-36.191407 0-66.472657 25.789062-73.4375 59.957031-96.152344 0-170.542969 0-202.980469 0zm80.40625 29.980469-2.722657 29.976562h-62.210937l7.746094-29.976562zm184.308593 0 7.496094 29.976562h-60.863281l-2.726563-29.976562zm14.992188 59.957031 14.988281 59.957031h-75.171875l-5.453125-59.957031zm-90.285156 59.957031h-89.8125l5.449218-59.957031h78.914063zm2.722656 29.976563 5.453125 59.957031h-106.164063l5.449219-59.957031zm-122.636719-29.976563h-77.265625l15.488282-59.957031h67.226562zm-85.011719 29.976563h82.285157l-5.453125 59.957031h-92.320313zm243.203126 59.957031-5.453126-59.957031h79.941407l14.992187 59.957031zm48.71875-269.804688c24.796874 0 44.96875 20.171876 44.96875 44.96875 0 15.625-8.015626 29.410157-20.148438 37.472657l-13.113281-52.464844h-54.09375c6.1875-17.445313 22.847656-29.976563 42.386719-29.976563zm-97.898438 59.957032 2.722656 29.976562h-73.457031l2.722656-29.976562zm0 0"></path>
-                            <path fill="#ffffff" fill-rule="evenodd" d="m331.128906 0h29.980469v60.957031h-29.980469zm0 0"></path>
-                            <path fill="#ffffff" fill-rule="evenodd" d="m451.042969 150.890625h60.957031v29.980469h-60.957031zm0 0"></path>
-                            <path fill="#ffffff" fill-rule="evenodd" d="m409.710938 81.089844 42.394531-42.394532 21.199219 21.199219-42.398438 42.394531zm0 0"></path>
-                            <path fill="#ffffff" fill-rule="evenodd" d="m473.3125 271.871094-21.199219 21.195312-42.394531-42.394531 21.195312-21.199219zm0 0"></path>
-                            <path fill="#ffffff" fill-rule="evenodd" d="m240.128906 38.691406 42.394532 42.394532-21.199219 21.199218-42.394531-42.398437zm0 0"></path>
-                        </svg>
-                    </g>
-					<text class="Title" text-anchor="middle" transform="translate(0,-45)" alignment-baseline="central">PV</text>
-					<text class="PowerText" text-anchor="middle" transform="translate(0,30)" alignment-baseline="central">22.4 kW</text>
-				</g>
-
-				<g id="ChargeComponent" transform="translate(460, 268)">
-					<circle class="circle grey" r="64" />
-                    <g transform="translate(-18 -30)">
-                        <svg id="fi_3400938" height="40" enable-background="new 0 0 512.003 512.003" viewBox="0 0 512.003 512.003" width="40" xmlns="http://www.w3.org/2000/svg">
-                            <g>
-                                <path fill="#ffffff" fill-rule="evenodd"
-                                    d="m209.134 85.003h38.053l-18.155 32.185c-4.07 7.216-1.52 16.364 5.695 20.435 2.33 1.314 4.859 1.938 7.356 1.938 5.236 0 10.322-2.747 13.079-7.633l30.772-54.554c2.62-4.645 2.577-10.33-.112-14.935-2.688-4.604-7.62-7.435-12.952-7.435h-36.102l20.68-31.829c4.513-6.947 2.54-16.237-4.406-20.75-6.948-4.515-16.238-2.541-20.75 4.406l-35.735 55.001c-2.997 4.612-3.229 10.495-.605 15.328 2.623 4.833 7.682 7.843 13.182 7.843z">
-                                </path>
-                                <path fill="#ffffff" fill-rule="evenodd"
-                                    d="m512.001 27.003c0-8.284-6.716-15-15-15s-15 6.716-15 15v12h-30v-12c0-8.284-6.716-15-15-15s-15 6.716-15 15l.001 60c0 19.554 12.541 36.227 29.999 42.419v106.58c0 22.997-17.343 42.007-39.635 44.669l-28.959-61.312c-15.642-33.117-40.868-51.355-71.033-51.355h-142.785c-30.173 0-55.401 18.243-71.037 51.368l-34.567 73.228c-.07.149-.121.302-.186.452-37.783 18.868-63.797 57.926-63.797 102.951v10 61c0 24.813 20.187 45 45 45h30c24.813 0 45-20.187 45-45v-16h242v16c0 24.813 20.187 45 45 45h30.001c24.813 0 45-20.187 45-45l-.001-71c0-37.131-17.695-70.203-45.089-91.242 26.508-11.577 45.088-38.033 45.088-68.759v-106.579c17.459-6.192 30.001-22.865 30.001-42.42zm-59.999 369v10c0 8.271-6.729 15-15 15h-85.467c-6.968-34.192-37.271-60-73.491-60h-74.084c-36.219 0-66.522 25.808-73.491 60h-85.467c-8.271 0-15-6.729-15-15v-10c0-6.533.766-12.886 2.167-19h63.274c29.5 0 53.5-24 53.5-53.5v-12.5h184.117v12.5c0 29.5 24 53.5 53.5 53.5h63.274c1.402 6.114 2.168 12.467 2.168 19zm-65.442-49c-12.958 0-23.5-10.542-23.5-23.5v-12.5h3.941c28.63 0 53.981 14.243 69.39 36zm-260.879-114.827c7.359-15.589 20.95-34.173 43.908-34.173h142.784c22.951 0 36.545 18.581 43.906 34.167l23.063 48.831h-23.342c-.013 0-.026.002-.039.002h-240.959c-4.293 0-8.529.244-12.701.705zm-10.679 78.827h3.942v12.5c0 12.958-10.542 23.5-23.5 23.5h-49.832c15.409-21.757 40.759-36 69.39-36zm-25 156c0 8.271-6.729 15-15 15h-30c-8.271 0-15-6.729-15-15v-18.581c4.695 1.665 9.742 2.58 15 2.58h45zm71.528-46c6.191-17.461 22.873-30 42.43-30h74.083c19.557 0 36.239 12.539 42.43 30zm275.473 61h-30.001c-8.271 0-15-6.729-15-15v-16h45c5.259 0 10.306-.915 15.001-2.581v18.581c0 8.271-6.729 15-15 15zm44.999-395c0 8.271-6.729 15-15 15s-15-6.729-15-15v-18h30z">
-                                </path>
-                            </g>
-                        </svg>    </g>
-					<text class="Title" text-anchor="middle" transform="translate(0,-45)" alignment-baseline="central">Charge</text>
-					<text class="PowerText" text-anchor="middle" transform="translate(0,30)" alignment-baseline="central">239 kW</text>
-				</g>
-
-				<g id="BatteryComponent" transform="translate(250, 268)">
-					<circle class="circle purple" r="64" />
-                    <g transform="translate(-22 -30)"> 
-                        <svg  width="50" height="50" viewBox="0 0 492 492" xmlns="http://www.w3.org/2000/svg" id="fi_14730580"><g id="Master_Layer_2"></g><g id="Layer_1"><g><g><g><path clip-rule="evenodd" d="m306.4 431.1h-120.2c-18.8 0-34.1-15.3-34.1-34.1v-265.8c0-18.8 15.3-34.1 34.1-34.1h120.2c18.8 0 34.1 15.3 34.1 34.1v265.8c-.1 18.8-15.4 34.1-34.1 34.1zm-120.2-322.5c-12.5 0-22.6 10.1-22.6 22.6v265.8c0 12.5 10.1 22.6 22.6 22.6h120.2c12.5 0 22.6-10.1 22.6-22.6v-265.8c0-12.5-10.1-22.6-22.6-22.6z" fill="#ffffff" fill-rule="evenodd"></path></g><g><path clip-rule="evenodd" d="m308.2 397.8h-123.9c-3.2 0-5.8-2.6-5.8-5.8v-256c0-3.2 2.6-5.8 5.8-5.8h123.9c3.2 0 5.8 2.6 5.8 5.8v256c0 3.3-2.6 5.8-5.8 5.8zm-118.1-11.5h112.4v-244.5h-112.4z" fill="#ffffff" fill-rule="evenodd"></path></g><g><path clip-rule="evenodd" d="m296.8 108.6c-3.2 0-5.8-2.6-5.8-5.8v-21c0-4.4-3.6-7.9-7.9-7.9h-73.8c-4.4 0-7.9 3.6-7.9 7.9v21c0 3.2-2.6 5.8-5.8 5.8s-5.8-2.6-5.8-5.8v-21c0-10.7 8.7-19.4 19.4-19.4h73.8c10.7 0 19.4 8.7 19.4 19.4v21c.2 3.3-2.4 5.8-5.6 5.8z" fill="#ffffff" fill-rule="evenodd"></path></g><g><g><path clip-rule="evenodd" d="m275.1 184.6h-57.6c-3.2 0-5.8-2.6-5.8-5.8s2.6-5.8 5.8-5.8h57.6c3.2 0 5.8 2.6 5.8 5.8-.1 3.3-2.6 5.8-5.8 5.8z" fill="#ffffff" fill-rule="evenodd"></path></g><g><path clip-rule="evenodd" d="m275.1 227.3h-57.6c-3.2 0-5.8-2.6-5.8-5.8s2.6-5.8 5.8-5.8h57.6c3.2 0 5.8 2.6 5.8 5.8-.1 3.2-2.6 5.8-5.8 5.8z" fill="#ffffff" fill-rule="evenodd"></path></g><g><path clip-rule="evenodd" d="m275.1 269.9h-57.6c-3.2 0-5.8-2.6-5.8-5.8s2.6-5.8 5.8-5.8h57.6c3.2 0 5.8 2.6 5.8 5.8-.1 3.2-2.6 5.8-5.8 5.8z" fill="#ffffff" fill-rule="evenodd"></path></g><g><path clip-rule="evenodd" d="m275.1 312.5h-57.6c-3.2 0-5.8-2.6-5.8-5.8s2.6-5.8 5.8-5.8h57.6c3.2 0 5.8 2.6 5.8 5.8s-2.6 5.8-5.8 5.8z" fill="#ffffff" fill-rule="evenodd"></path></g><g><path clip-rule="evenodd" d="m275.1 355.1h-57.6c-3.2 0-5.8-2.6-5.8-5.8s2.6-5.8 5.8-5.8h57.6c3.2 0 5.8 2.6 5.8 5.8-.1 3.2-2.6 5.8-5.8 5.8z" fill="#ffffff" fill-rule="evenodd"></path></g></g></g></g></g></svg>
-                    </g>
-					<text class="Title" text-anchor="middle" transform="translate(0,-45)" alignment-baseline="central">Battery</text>
-					<text class="PowerText" text-anchor="middle" transform="translate(0,30)" alignment-baseline="central">139 kW</text>
-				</g>
-
-				<g id="OtherComponent" transform="translate(40, 268)">
-					<circle class="circle blue" r="64" />
-                    <g transform="translate(-18 -30)">
-                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" id="svg7119" height="40" viewBox="0 0 16.933333 16.933334" width="40" >
-                        <g id="layer1" transform="translate(0 -280.067)">
-                            <path id="path31836" d="m9.5115651 280.59581c-.08153.004-.1564777.0461-.2030883.11317l-6.0859335 8.73073c-.122364.17542.00316.41601.2170409.416h4.2105956l-.5053954 6.32984c-.019767.26758.3253531.39129.480074.17209l6.0859336-8.73022c.12223-.17523-.0029-.41559-.216524-.416h-4.2111126l.5059121-6.33036c.012691-.1594-.1178126-.29355-.2775024-.28525z" 
-                            font-variant-ligatures="normal" font-variant-position="normal" font-variant-caps="normal" font-variant-numeric="normal" 
-                            font-variant-alternates="normal" font-feature-settings="normal" text-indent="0" text-align="start"  fill="#ffffff"
-                            text-decoration-line="none" text-decoration-style="solid" text-decoration-color="rgb(255, 255, 255)" text-transform="none"
-                             text-orientation="mixed" white-space="normal" shape-padding="0" isolation="auto" mix-blend-mode="normal" solid-color="rgb(255, 255, 255)"
-                              solid-opacity="1" vector-effect="none"/>
                         </g>
-                    </svg>
+                    </g>
+                </svg>
+            </g>
+            <text class="Title" text-anchor="middle" transform="translate(0,-45)" alignment-baseline="central">Grid</text>
+            <text class="PowerText" id="GridComponent_pt" text-anchor="middle" transform="translate(0,30)" alignment-baseline="central">139 kW</text>
+        </g>
 
-                </g>
-					<text class="Title" text-anchor="middle" transform="translate(0,-45)" alignment-baseline="central">Office</text>
-					<text class="PowerText" text-anchor="middle" transform="translate(0,30)" alignment-baseline="central">239 kW</text>
-				</g>
+        <g id="SolarComponent" transform="translate(250, 468)" display="none">
+            <circle id="SolarComponent_circle" class="circle  " r="64" />
+            <g transform="translate(-18 -30)">
+                <svg viewBox="0 0 512.00001 512" height="40" width="50" xmlns="http://www.w3.org/2000/svg" id="fi_1051748">
+                    <path fill="#ffffff" fill-rule="evenodd" d="m69.699219 150.890625-69.699219 269.808594h196.226562v60.957031h-59.957031v29.976562h149.890625v-29.976562h-59.957031v-60.957031h199.070313l-46.804688-187.222657c25.175781-12.097656 42.597656-37.847656 42.597656-67.597656 0-41.324218-33.621094-74.945312-74.949218-74.945312-36.191407 0-66.472657 25.789062-73.4375 59.957031-96.152344 0-170.542969 0-202.980469 0zm80.40625 29.980469-2.722657 29.976562h-62.210937l7.746094-29.976562zm184.308593 0 7.496094 29.976562h-60.863281l-2.726563-29.976562zm14.992188 59.957031 14.988281 59.957031h-75.171875l-5.453125-59.957031zm-90.285156 59.957031h-89.8125l5.449218-59.957031h78.914063zm2.722656 29.976563 5.453125 59.957031h-106.164063l5.449219-59.957031zm-122.636719-29.976563h-77.265625l15.488282-59.957031h67.226562zm-85.011719 29.976563h82.285157l-5.453125 59.957031h-92.320313zm243.203126 59.957031-5.453126-59.957031h79.941407l14.992187 59.957031zm48.71875-269.804688c24.796874 0 44.96875 20.171876 44.96875 44.96875 0 15.625-8.015626 29.410157-20.148438 37.472657l-13.113281-52.464844h-54.09375c6.1875-17.445313 22.847656-29.976563 42.386719-29.976563zm-97.898438 59.957032 2.722656 29.976562h-73.457031l2.722656-29.976562zm0 0"></path>
+                    <path fill="#ffffff" fill-rule="evenodd" d="m331.128906 0h29.980469v60.957031h-29.980469zm0 0"></path>
+                    <path fill="#ffffff" fill-rule="evenodd" d="m451.042969 150.890625h60.957031v29.980469h-60.957031zm0 0"></path>
+                    <path fill="#ffffff" fill-rule="evenodd" d="m409.710938 81.089844 42.394531-42.394532 21.199219 21.199219-42.398438 42.394531zm0 0"></path>
+                    <path fill="#ffffff" fill-rule="evenodd" d="m473.3125 271.871094-21.199219 21.195312-42.394531-42.394531 21.195312-21.199219zm0 0"></path>
+                    <path fill="#ffffff" fill-rule="evenodd" d="m240.128906 38.691406 42.394532 42.394532-21.199219 21.199218-42.394531-42.398437zm0 0"></path>
+                </svg>
+            </g>
+            <text class="Title" text-anchor="middle" transform="translate(0,-45)" alignment-baseline="central">PV</text>
+            <text class="PowerText" id="SolarComponent_pt" text-anchor="middle" transform="translate(0,30)" alignment-baseline="central">22.4 kW</text>
+        </g>
 
-				<g>
-					<!-- Batt -Grid Line -->
-					<line class="flow-line" x1="255" y1="144" x2="255" y2="190.5" />
-					<line class="dot out" x1="255" y1="144" x2="255" y2="190.5" />
-				</g>
-				<g>
-					<!-- Batt -Solar Line -->
-					<line class="flow-line" x1="255" y1="345" x2="255" y2="391" />
-					<line class="dot in" x1="255" y1="345" x2="255" y2="391" />
-				</g>
-				<g>
-					<!-- Batt - Other Line -->
-					<line class="flow-line" x1="120" y1="272" x2="170" y2="272" />
-					<line class="dot in" x1="120" y1="272" x2="170" y2="272" />
-				</g>
-				<g>
-					<!-- Batt - Charge Line -->
-					<line class="flow-line" x1="330" y1="268" x2="380" y2="268" />
-					<line class="dot out" x1="330" y1="268" x2="380" y2="268" />
-				</g>
 
-               
-</svg>
-    
+        <g id="ChargeComponent" transform="translate(460, 268)" display="none">
+            <circle id="ChargeComponent_circle" class="circle " r="64" />
+            <g transform="translate(-18 -30)">
+                <svg id="fi_3400938" height="40" enable-background="new 0 0 512.003 512.003" viewBox="0 0 512.003 512.003" width="40" xmlns="http://www.w3.org/2000/svg">
+                    <g>
+                        <path fill="#ffffff" fill-rule="evenodd"
+                              d="m209.134 85.003h38.053l-18.155 32.185c-4.07 7.216-1.52 16.364 5.695 20.435 2.33 1.314 4.859 1.938 7.356 1.938 5.236 0 10.322-2.747 13.079-7.633l30.772-54.554c2.62-4.645 2.577-10.33-.112-14.935-2.688-4.604-7.62-7.435-12.952-7.435h-36.102l20.68-31.829c4.513-6.947 2.54-16.237-4.406-20.75-6.948-4.515-16.238-2.541-20.75 4.406l-35.735 55.001c-2.997 4.612-3.229 10.495-.605 15.328 2.623 4.833 7.682 7.843 13.182 7.843z">
+                        </path>
+                        <path fill="#ffffff" fill-rule="evenodd"
+                              d="m512.001 27.003c0-8.284-6.716-15-15-15s-15 6.716-15 15v12h-30v-12c0-8.284-6.716-15-15-15s-15 6.716-15 15l.001 60c0 19.554 12.541 36.227 29.999 42.419v106.58c0 22.997-17.343 42.007-39.635 44.669l-28.959-61.312c-15.642-33.117-40.868-51.355-71.033-51.355h-142.785c-30.173 0-55.401 18.243-71.037 51.368l-34.567 73.228c-.07.149-.121.302-.186.452-37.783 18.868-63.797 57.926-63.797 102.951v10 61c0 24.813 20.187 45 45 45h30c24.813 0 45-20.187 45-45v-16h242v16c0 24.813 20.187 45 45 45h30.001c24.813 0 45-20.187 45-45l-.001-71c0-37.131-17.695-70.203-45.089-91.242 26.508-11.577 45.088-38.033 45.088-68.759v-106.579c17.459-6.192 30.001-22.865 30.001-42.42zm-59.999 369v10c0 8.271-6.729 15-15 15h-85.467c-6.968-34.192-37.271-60-73.491-60h-74.084c-36.219 0-66.522 25.808-73.491 60h-85.467c-8.271 0-15-6.729-15-15v-10c0-6.533.766-12.886 2.167-19h63.274c29.5 0 53.5-24 53.5-53.5v-12.5h184.117v12.5c0 29.5 24 53.5 53.5 53.5h63.274c1.402 6.114 2.168 12.467 2.168 19zm-65.442-49c-12.958 0-23.5-10.542-23.5-23.5v-12.5h3.941c28.63 0 53.981 14.243 69.39 36zm-260.879-114.827c7.359-15.589 20.95-34.173 43.908-34.173h142.784c22.951 0 36.545 18.581 43.906 34.167l23.063 48.831h-23.342c-.013 0-.026.002-.039.002h-240.959c-4.293 0-8.529.244-12.701.705zm-10.679 78.827h3.942v12.5c0 12.958-10.542 23.5-23.5 23.5h-49.832c15.409-21.757 40.759-36 69.39-36zm-25 156c0 8.271-6.729 15-15 15h-30c-8.271 0-15-6.729-15-15v-18.581c4.695 1.665 9.742 2.58 15 2.58h45zm71.528-46c6.191-17.461 22.873-30 42.43-30h74.083c19.557 0 36.239 12.539 42.43 30zm275.473 61h-30.001c-8.271 0-15-6.729-15-15v-16h45c5.259 0 10.306-.915 15.001-2.581v18.581c0 8.271-6.729 15-15 15zm44.999-395c0 8.271-6.729 15-15 15s-15-6.729-15-15v-18h30z">
+                        </path>
+                    </g>
+                </svg>
+            </g>
+            <text class="Title" text-anchor="middle" transform="translate(0,-45)" alignment-baseline="central">Charge</text>
+            <text class="PowerText" id="ChargeComponent_pt" text-anchor="middle" transform="translate(0,30)" alignment-baseline="central">239 kW</text>
+        </g>
+
+        <g id="BatteryComponent" transform="translate(250, 268)" display="none">
+            <circle id="BatteryComponent_circle" class="circle " r="64" />
+            <g transform="translate(-22 -30)">
+                <svg width="50" height="50" viewBox="0 0 492 492" xmlns="http://www.w3.org/2000/svg" id="fi_14730580"><g id="Master_Layer_2"></g><g id="Layer_1"><g><g><g><path clip-rule="evenodd" d="m306.4 431.1h-120.2c-18.8 0-34.1-15.3-34.1-34.1v-265.8c0-18.8 15.3-34.1 34.1-34.1h120.2c18.8 0 34.1 15.3 34.1 34.1v265.8c-.1 18.8-15.4 34.1-34.1 34.1zm-120.2-322.5c-12.5 0-22.6 10.1-22.6 22.6v265.8c0 12.5 10.1 22.6 22.6 22.6h120.2c12.5 0 22.6-10.1 22.6-22.6v-265.8c0-12.5-10.1-22.6-22.6-22.6z" fill="#ffffff" fill-rule="evenodd"></path></g><g><path clip-rule="evenodd" d="m308.2 397.8h-123.9c-3.2 0-5.8-2.6-5.8-5.8v-256c0-3.2 2.6-5.8 5.8-5.8h123.9c3.2 0 5.8 2.6 5.8 5.8v256c0 3.3-2.6 5.8-5.8 5.8zm-118.1-11.5h112.4v-244.5h-112.4z" fill="#ffffff" fill-rule="evenodd"></path></g><g><path clip-rule="evenodd" d="m296.8 108.6c-3.2 0-5.8-2.6-5.8-5.8v-21c0-4.4-3.6-7.9-7.9-7.9h-73.8c-4.4 0-7.9 3.6-7.9 7.9v21c0 3.2-2.6 5.8-5.8 5.8s-5.8-2.6-5.8-5.8v-21c0-10.7 8.7-19.4 19.4-19.4h73.8c10.7 0 19.4 8.7 19.4 19.4v21c.2 3.3-2.4 5.8-5.6 5.8z" fill="#ffffff" fill-rule="evenodd"></path></g><g><g><path clip-rule="evenodd" d="m275.1 184.6h-57.6c-3.2 0-5.8-2.6-5.8-5.8s2.6-5.8 5.8-5.8h57.6c3.2 0 5.8 2.6 5.8 5.8-.1 3.3-2.6 5.8-5.8 5.8z" fill="#ffffff" fill-rule="evenodd"></path></g><g><path clip-rule="evenodd" d="m275.1 227.3h-57.6c-3.2 0-5.8-2.6-5.8-5.8s2.6-5.8 5.8-5.8h57.6c3.2 0 5.8 2.6 5.8 5.8-.1 3.2-2.6 5.8-5.8 5.8z" fill="#ffffff" fill-rule="evenodd"></path></g><g><path clip-rule="evenodd" d="m275.1 269.9h-57.6c-3.2 0-5.8-2.6-5.8-5.8s2.6-5.8 5.8-5.8h57.6c3.2 0 5.8 2.6 5.8 5.8-.1 3.2-2.6 5.8-5.8 5.8z" fill="#ffffff" fill-rule="evenodd"></path></g><g><path clip-rule="evenodd" d="m275.1 312.5h-57.6c-3.2 0-5.8-2.6-5.8-5.8s2.6-5.8 5.8-5.8h57.6c3.2 0 5.8 2.6 5.8 5.8s-2.6 5.8-5.8 5.8z" fill="#ffffff" fill-rule="evenodd"></path></g><g><path clip-rule="evenodd" d="m275.1 355.1h-57.6c-3.2 0-5.8-2.6-5.8-5.8s2.6-5.8 5.8-5.8h57.6c3.2 0 5.8 2.6 5.8 5.8-.1 3.2-2.6 5.8-5.8 5.8z" fill="#ffffff" fill-rule="evenodd"></path></g></g></g></g></g></svg>
+            </g>
+            <text class="Title" text-anchor="middle" transform="translate(0,-45)" alignment-baseline="central">Battery</text>
+            <text class="PowerText" id="BatteryComponent_pt" text-anchor="middle" transform="translate(0,30)" alignment-baseline="central">139 kW</text>
+        </g>
+
+        <g id="OtherComponent" transform="translate(40, 268)" display="none">
+            <circle id="OtherComponent_circle" class="circle " r="64" />
+            <g transform="translate(-18 -30)">
+                <svg xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" id="svg7119" height="40" viewBox="0 0 16.933333 16.933334" width="40">
+                    <g id="layer1" transform="translate(0 -280.067)">
+                        <path id="path31836" d="m9.5115651 280.59581c-.08153.004-.1564777.0461-.2030883.11317l-6.0859335 8.73073c-.122364.17542.00316.41601.2170409.416h4.2105956l-.5053954 6.32984c-.019767.26758.3253531.39129.480074.17209l6.0859336-8.73022c.12223-.17523-.0029-.41559-.216524-.416h-4.2111126l.5059121-6.33036c.012691-.1594-.1178126-.29355-.2775024-.28525z"
+                              font-variant-ligatures="normal" font-variant-position="normal" font-variant-caps="normal" font-variant-numeric="normal"
+                              font-variant-alternates="normal" font-feature-settings="normal" text-indent="0" text-align="start" fill="#ffffff"
+                              text-decoration-line="none" text-decoration-style="solid" text-decoration-color="rgb(255, 255, 255)" text-transform="none"
+                              text-orientation="mixed" white-space="normal" shape-padding="0" isolation="auto" mix-blend-mode="normal" solid-color="rgb(255, 255, 255)"
+                              solid-opacity="1" vector-effect="none" />
+                    </g>
+                </svg>
+
+            </g>
+            <text class="Title" text-anchor="middle" transform="translate(0,-45)" alignment-baseline="central">Office</text>
+            <text class="PowerText" id="OtherComponent_pt" text-anchor="middle" transform="translate(0,30)" alignment-baseline="central">239 kW</text>
+        </g>
+
+
+
+    </svg>
+
 </div>
